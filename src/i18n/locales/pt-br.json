@@ -1,0 +1,15 @@
+{
+  "translation": {
+    "GENERICS": {
+      "OK": "OK",
+      "CONFIRM": "CONFIRMAR",
+      "CANCEL": "CANCELAR"
+    },
+    "COMPONENTS": {
+      "AUTH_MODAL": {
+        "SIGN_UP": "REGISTRAR",
+        "SIGN_IN": "ENTRAR"
+      }
+    }
+  }
+}

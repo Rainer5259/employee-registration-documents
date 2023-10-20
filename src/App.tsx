@@ -1,6 +1,8 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react'
+import logo from './logo.svg'
+import './App.css'
+import { AuthModal } from './components/AuthModal'
+import './i18n'
 
 function App() {
   return (
@@ -12,7 +14,7 @@ function App() {
         </p>
         <a
           className="App-link"
-          href="https://reactjs.org"
+          href="/login"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -20,7 +22,7 @@ function App() {
         </a>
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
