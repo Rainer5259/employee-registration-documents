@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom'
-import Login from '../pages/login'
+import AuthenticationScreen from '../pages/AuthenticationScreen'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Login />
+    element: <AuthenticationScreen />
   }
 ])

@@ -1,11 +1,9 @@
 import React from 'react'
-import { FC, useEffect, useState } from 'react'
-import { Button } from '../ui/Button'
-import { Input } from '../ui/Input'
+import { FC } from 'react'
 import styles from './authModal.module.sass'
 import { AuthModalTypes } from './types'
 import { useTranslation } from 'react-i18next'
-import i18n from '~/i18n'
+import { Button } from '../ui/Button'
 
 export const AuthModal: FC<AuthModalTypes> = ({
   email,
@@ -13,39 +11,41 @@ export const AuthModal: FC<AuthModalTypes> = ({
   setEmail,
   setPassword,
   onPressLogin,
-  onPressRegister
+  onPressRegister,
+  isLoading
 }) => {
-  const [loading, setLoading] = useState(false)
-  useEffect(() => {
-    i18n
-  }, [])
   const { t } = useTranslation()
+
   return (
     <div className={styles.container}>
+      <div className={styles.logoBox}>
+        <img src={require('../../assets/png/taugor-logo.png')} />
+      </div>
       <form id="login">
-        <div className={styles.inputContainer}>
-          <Input
+        <div className={styles.inputBox}>
+          <input
             type="email"
             placeholder="Email"
             className={styles.inputContainer}
             onChange={e => setEmail(e.target.value)}
             value={email}
           />
-          <Input
+
+          <input
             type="password"
             placeholder="Password"
-            className={styles.inputContainer}
+            className={styles.inputContent}
             onChange={e => setPassword(e.target.value)}
             value={password}
           />
         </div>
 
-        <div>
-          <Button loading={loading}>
-            <text>{t('COMPONENTS.AUTH_MODAL.SIGN_IN')}</text>
+        <div className={styles.buttonBox}>
+          <Button onClick={onPressLogin} isLoading={isLoading}>
+            <p>{t('COMPONENTS.AUTH_MODAL.SIGN_IN')}</p>
           </Button>
-          <Button loading={loading}>
-            <text>{t('COMPONENTS.AUTH_MODAL.SIGN_UP')}</text>
+          <Button onClick={onPressRegister} isLoading={isLoading}>
+            <p>{t('COMPONENTS.AUTH_MODAL.SIGN_UP')}</p>
           </Button>
         </div>
       </form>

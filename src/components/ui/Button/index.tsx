@@ -2,14 +2,14 @@ import { ButtonHTMLAttributes, ReactNode } from 'react'
 import { FaSpinner } from 'react-icons/fa'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  loading?: boolean
+  isLoading?: boolean
   children: ReactNode
 }
 
-export function Button({ loading, children, ...props }: ButtonProps) {
+export function Button({ isLoading, children, ...props }: ButtonProps) {
   return (
-    <button {...props} disabled={loading}>
-      {loading ? <FaSpinner color="#FFF" size={16} /> : <a>{children}</a>}
+    <button {...props} disabled={isLoading}>
+      {isLoading ? <FaSpinner color="#FFF" size={16} /> : <a>{children}</a>}
     </button>
   )
 }

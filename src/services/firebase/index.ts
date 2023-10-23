@@ -1,7 +1,5 @@
 import { initializeApp } from 'firebase/app'
 
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
 // import {
 //   API_KEY,
 //   AUTH_DOMAIN,
@@ -31,8 +29,3 @@ export const firebaseConfig = {
   measurementId: 'G-66HQF3HF7N'
 }
 export const app = initializeApp(firebaseConfig)
-
-export const authFirebaseService = getAuth(app)
-
-const db = getFirestore(app)
-// export const authFirebaseService = getAuth(app)
