@@ -1,15 +1,38 @@
 {
   "translation": {
     "GENERICS": {
-      "OK": "OK",
-      "CONFIRM": "CONFIRM",
-      "CANCEL": "CANCEL"
+      "OK": "Ok",
+      "CONFIRM": "Confirm",
+      "CANCEL": "Cancel",
+      "EMAIL": "E-mail",
+      "PASSWORD": "Password",
+      "NEXT": "Next",
+      "WELCOME": "Welcome!"
     },
     "COMPONENTS": {
       "AUTH_MODAL": {
-        "SIGN_UP": "SIGN UP",
-        "SIGN_IN": "JOIN"
+        "SIGN_UP": "Sign up",
+        "SIGN_IN": "Join"
       }
+    },
+    "SCREENS": {
+      "AUTHENTICATION": {
+        "ERRORS": {
+          "USER_EXIST": "User already exist",
+          "USER_NOT_EXIST": "User does not  exist",
+          "INVALID_CREDENTIALS": "Invalid credentials",
+          "FILL_FIELDS": "Fill in all fields",
+          "TOO_MANY_ATTEMPTS_TRY_LATER": "Too many requests",
+          "INVALID_EMAIL": "Invalid email"
+        },
+        "SUCCESS": {
+          "USER_REGISTERED": "User registered successfully"
+        }
+      }
+    },
+    "ERRORS": {
+      "UNKNOWN": "Unknown error",
+      "HAS_OCURRED": "An error occurred"
     }
   }
 }
