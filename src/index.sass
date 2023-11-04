@@ -6,10 +6,16 @@
 
 :root
   --white: #FFF
-  --light-gray: #EAEAEA
+  --default-gray: #EAEAEA
+  --default-secondary-gray: #c7c7c7
+  --silver-gray: #BDBEBE
+  --light-gray: #D8D9D9
   --light-gray-secondary: #707070
   --black: #000
   --blue: #2581c4
+  --taupe-gray: #a6a1a1
+  --primary-text-gray: #AAB2B2
+  --secondary-text-gray: #2B2C2C
 
 button
   cursor: pointer
@@ -19,14 +25,23 @@ a
   text-decoration: none
 
 body
-  background: (var(--white))
+  background: (var(--default-gray))
 
-body,
-input,
-textarea,
-select,
+input
+  border-width: 0
+  background: (var(--light-gray))
+  padding-inline: 10px
+
+textarea
+select
+
 button
-  font: 400 1rem sans-serif
+  font: 400 0.8rem Roboto, sans-serif
+  border-width: 0px
+  color: #000
+
+text
+  font: 400 1rem Roboto, sans-serif
 
 @media (max-width: 720px)
   html
