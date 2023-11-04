@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { User } from 'firebase/auth'
 import { fetchUserData } from '../thunks/fetchUserData'
-import Cookies from 'js-cookie'
+import { User } from 'firebase/auth'
 
 export interface AuthenticateUserProps {
   token: string | null
@@ -26,7 +25,9 @@ export const authenticateUserSlice = createSlice({
   reducers: {
     setToken: (state, action: PayloadAction<string | null>) => {
       state.token = action.payload
-      Cookies.set('authUserFirebase', action.payload!, {})
+    },
+    setUser: (state, action: PayloadAction<User | null>) => {
+      state.user = action.payload
     }
   },
 
@@ -47,6 +48,6 @@ export const authenticateUserSlice = createSlice({
   }
 })
 
-export const { setToken } = authenticateUserSlice.actions
+export const { setToken, setUser } = authenticateUserSlice.actions
 
 export default authenticateUserSlice.reducer
