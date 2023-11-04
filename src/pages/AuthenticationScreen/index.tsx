@@ -3,37 +3,43 @@ import { FormEvent, useState } from 'react'
 import styles from './login.module.sass'
 import { AuthModal } from '../../components/AuthModal/index'
 import { t } from 'i18next'
-import { AuthErrorCodes } from 'firebase/auth'
+import { AuthErrorCodes, User } from 'firebase/auth'
 import { toast } from 'react-toastify'
 import { FirebaseError } from 'firebase/app'
 import { AuthErrorCodesCustom } from '../../utils/AuthErrorCodesCustom'
 import { useNavigate } from 'react-router-dom'
 import UserService from '../../services/Api/user.service'
-import { setToken } from '../../redux/slices/authenticateUser'
+import { setToken, setUser } from '../../redux/slices/authenticateUser'
+import Cookies from 'js-cookie'
+import { useDispatch, useSelector } from 'react-redux'
+import { type RootState } from '../../redux/store'
+import CryptoJS from 'crypto-js'
 
 export default function AuthenticationScreen() {
-  const [email, setEmail] = useState('o@email.com')
+  const [email, setEmail] = useState('oo@email.com')
   const [password, setPassword] = useState('123123')
   const [isLoading, setLoading] = useState(false)
+  const token = useSelector((state: RootState) => state.authenticateUser.token)
   const navigate = useNavigate()
-
-  // useEffect(() => {}, [])
+  const dispatch = useDispatch()
 
   const handleSignUp = async (event: FormEvent) => {
     event.preventDefault()
     setLoading(true)
-    if (email === '' || password === '') {
-      throw toast.error(t('SCREENS.AUTHENTICATION.ERRORS.FILL_FIELD'))
+
+    if (!email || !password) {
+      return toast.error(t('SCREENS.AUTHENTICATION.ERRORS.FILL_FIELDS'))
     }
+
     try {
       const user = await UserService.signUpUser(email, password)
-
       if (user) {
         setEmail('')
         setPassword('')
-        setToken(user.refreshToken)
-        console.log('my refresh token', user.refreshToken)
+        dispatch(setToken(await user.getIdToken()))
+        dispatch(setUser(user))
         navigate('/dashboard')
+
         return toast.success(
           t('SCREENS.AUTHENTICATION.SUCCESS.USER_REGISTERED')
         )
@@ -48,7 +54,7 @@ export default function AuthenticationScreen() {
           break
 
         case AuthErrorCodes.INVALID_EMAIL:
-          toast.error(t('SCREENS.AUTHENTICATION.ERRORS.USER_EXIST'))
+          toast.error(t('SCREENS.AUTHENTICATION.ERRORS.INVALID_EMAIL'))
           break
 
         default:
@@ -63,16 +69,36 @@ export default function AuthenticationScreen() {
   const handleLogin = async (event: FormEvent) => {
     event.preventDefault()
 
+    if (!email || !password) {
+      return toast.error(t('SCREENS.AUTHENTICATION.ERRORS.FILL_FIELDS'))
+    }
+
     try {
       const user = await UserService.signInUser(email, password)
+
       if (user) {
+        const userConvertedToString = JSON.stringify(user)
+        const encryptedData = CryptoJS.AES.encrypt(
+          userConvertedToString,
+          'storagedUser'
+        ).toString()
+        localStorage.setItem('encryptedUserData', encryptedData)
+        const refreshToken = parseInt(
+          (await user.getIdTokenResult()).expirationTime
+        )
+        Cookies.set('authFirebaseToken', user.refreshToken, {
+          expires: refreshToken
+        })
         toast.success(t('GENERICS.WELCOME'))
+        dispatch(setToken(user.refreshToken))
+        dispatch(setUser(user))
+        navigate('/home')
+
         return
       }
     } catch (e) {
       const error = e as FirebaseError
 
-      console.log(error.code)
       switch (error.code) {
         case AuthErrorCodesCustom.INVALID_CREDENTIALS:
           toast.error(t('SCREENS.AUTHENTICATION.ERRORS.INVALID_CREDENTIALS'))
@@ -89,19 +115,40 @@ export default function AuthenticationScreen() {
       }
     }
   }
+
+  useEffect(() => {
+    const loginWithStoredToken = async () => {
+      const authFirebaseToken = Cookies.get('authFirebaseToken')
+
+      if (authFirebaseToken) {
+        const storedUser = localStorage.getItem('encryptedUserData')
+        if (storedUser) {
+          const decryptedData = CryptoJS.AES.decrypt(
+            storedUser,
+            'storagedUser'
+          ).toString(CryptoJS.enc.Utf8)
+          const decryptedUserData: User = JSON.parse(decryptedData)
+          dispatch(setUser(decryptedUserData))
+          dispatch(setToken(authFirebaseToken))
+        }
+      }
+    }
+
+    loginWithStoredToken()
+  }, [!token])
+  console.log(token)
+
   return (
-    <body>
-      <div className={styles.container}>
-        <AuthModal
-          email={email}
-          password={password}
-          setEmail={setEmail}
-          setPassword={setPassword}
-          onPressLogin={handleLogin}
-          onPressRegister={handleSignUp}
-          isLoading={isLoading}
-        />
-      </div>
-    </body>
+    <div className={styles.container}>
+      <AuthModal
+        email={email}
+        password={password}
+        setEmail={setEmail}
+        setPassword={setPassword}
+        onPressLogin={handleLogin}
+        onPressRegister={handleSignUp}
+        isLoading={isLoading}
+      />
+    </div>
   )
 }
