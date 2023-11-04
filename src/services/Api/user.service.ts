@@ -2,6 +2,10 @@ import { User } from 'firebase/auth'
 import { Api } from '.'
 
 class UserService extends Api {
+  constructor() {
+    super('')
+  }
+
   async signInUser(email: string, password: string): Promise<User> {
     const data = await this.signInWithEmailAndPassword(email, password)
     return data
