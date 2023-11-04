@@ -23,16 +23,62 @@
           "INVALID_CREDENTIALS": "Email e/ou senha inválido(s)",
           "FILL_FIELDS": "Preencha todos os campos",
           "TOO_MANY_ATTEMPTS_TRY_LATER": "Limite de requisição excedido",
-          "INVALID_EMAIL": "Email inválido"
+          "INVALID_EMAIL": "Email inválido",
+          "SET_TOKEN": "Ocorreu um erro ao salvar token"
         },
         "SUCCESS": {
           "USER_REGISTERED": "Usuário cadastrado com sucesso"
+        }
+      },
+      "DASHBOARD": {
+        "TITLE": {
+          "TELL_US_ABOUT_YOURSELF": "Fale-nos um pouco sobre você",
+          "CONTACT_INFO": "Informações de contato"
+        },
+        "SUBTITLE": {
+          "HOW_CONTACT_YOU": "Diga quem você é, como os empregados podem entrar em contato com você e qual a sua profissão."
+        },
+        "EMPLOYEE": {
+          "ADD": "Adicionar novo funcionário",
+          "EDIT": "Editar funcionário"
+        },
+        "BUTTON": {
+          "CANCEL": "Cancelar",
+          "CONFIRM": "Confirmar",
+          "ADD": "Adicionar",
+          "PREVIOUS": "Anterior",
+          "NEXT": "Próximo"
+        },
+        "EXTERNAL_PLACEHOLDER": {
+          "NAME": "ex: Tiago ",
+          "LAST_NAME": "ex: Souza ",
+          "JOB": "ex: Emprego ",
+          "OFFICE": "ex: Cargo ",
+          "GENDER": "ex: Feminino / Masculino",
+          "SECTOR": "ex: Setor",
+          "SALARY": "ex: Salário",
+          "ISSUE_DATE": "ex: 22-06-1999",
+          "ADDRESS": "ex: Avenida Paulista, 1.234 - São Paulo - SP - 07010 001",
+          "PHONE_NUMBER": "ex: (11) 9 9123-7676",
+          "EMAIL": "ex: tiago.souza@email.com",
+          "NATIONALITY": "ex: Brasileiro",
+          "BIRTH_DATE": "ex: 23-05-1985 "
+        },
+        "PLACEHOLDER": {
+          "ISSUE_DATE": "Data de admissão"
+        },
+        "PDF_VIEWER": {
+          "TITLE": {
+            "EXPERIENCE": "Experience",
+            "CONTACT_DETAILS": "Contato"
+          }
         }
       }
     },
     "ERRORS": {
       "UNKNOWN": "Erro desconhecido",
-      "HAS_OCURRED": "Ocorreu um erro"
+      "HAS_OCURRED": "Ocorreu um erro",
+      "FILL_FIELDS": "Preencha todos os campos"
     }
   }
 }

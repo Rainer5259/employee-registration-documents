@@ -23,16 +23,63 @@
           "INVALID_CREDENTIALS": "Invalid credentials",
           "FILL_FIELDS": "Fill in all fields",
           "TOO_MANY_ATTEMPTS_TRY_LATER": "Too many requests",
-          "INVALID_EMAIL": "Invalid email"
+          "INVALID_EMAIL": "Invalid email",
+          "SET_TOKEN": "An error has occurred while save token"
         },
         "SUCCESS": {
           "USER_REGISTERED": "User registered successfully"
+        }
+      },
+      "DASHBOARD": {
+        "TITLE": {
+          "TELL_US_ABOUT_YOURSELF": "Tell us a little about yourself",
+          "CONTACT_INFO": "Contact information"
+        },
+        "SUBTITLE": {
+          "HOW_CONTACT_YOU": "Tell us who you are, how workers can contact you and qualify your profession."
+        },
+        "EMPLOYEE": {
+          "ADD": "Add new employee",
+          "EDIT": "Edit employee"
+        },
+        "BUTTON": {
+          "CANCEL": "Cancel",
+          "CONFIRM": "Confirm",
+          "ADD": "ADD",
+          "PREVIOUS": "Previous",
+          "NEXT": "Next"
+        },
+        "EXTERNAL_PLACEHOLDER": {
+          "NAME": "ex: Tiago ",
+          "LAST_NAME": "ex: Souza ",
+          "JOB": "ex: Job ",
+          "OFFICE": "ex: Office ",
+          "GENDER": "ex: Woman / Male",
+          "BIOGRAPHY": "Biography",
+          "SECTOR": "ex: Sector",
+          "SALARY": "ex: Salary",
+          "ISSUE_DATE": "ex: 22-06-1999",
+          "ADDRESS": "ex: Suzy Queue 4455 Landing Lange, APT 4 Louisville, KY 40018-1234",
+          "PHONE_NUMBER": "ex: (11) 9 9123-7676",
+          "EMAIL": "ex: tiago.souza@email.com",
+          "NATIONALITY": "ex: Brazilian",
+          "BIRTH_DATE": "ex: 23-06-1985"
+        },
+        "PLACEHOLDER": {
+          "ISSUE_DATE": "Issue date"
+        },
+        "PDF_VIEWER": {
+          "TITLE": {
+            "EXPERIENCE": "Experience",
+            "CONTACT_DETAILS": "Contact Details"
+          }
         }
       }
     },
     "ERRORS": {
       "UNKNOWN": "Unknown error",
-      "HAS_OCURRED": "An error occurred"
+      "HAS_OCURRED": "An error occurred",
+      "FILL_FIELDS": "Fill in all fields"
     }
   }
 }
