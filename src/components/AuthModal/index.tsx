@@ -26,7 +26,7 @@ export const AuthModal: FC<AuthModalTypes> = ({
           <input
             type="email"
             placeholder="Email"
-            className={styles.inputContainer}
+            className={styles.inputGroup}
             onChange={e => setEmail(e.target.value)}
             value={email}
           />
@@ -34,19 +34,26 @@ export const AuthModal: FC<AuthModalTypes> = ({
           <input
             type="password"
             placeholder="Password"
-            className={styles.inputContent}
+            className={styles.inputGroup}
             onChange={e => setPassword(e.target.value)}
             value={password}
           />
-        </div>
-
-        <div className={styles.buttonBox}>
-          <Button onClick={onPressLogin} isLoading={isLoading}>
-            <p>{t('COMPONENTS.AUTH_MODAL.SIGN_IN')}</p>
-          </Button>
-          <Button onClick={onPressRegister} isLoading={isLoading}>
-            <p>{t('COMPONENTS.AUTH_MODAL.SIGN_UP')}</p>
-          </Button>
+          <div className={styles.buttonBox}>
+            <Button
+              onClick={onPressLogin}
+              isLoading={isLoading}
+              className={styles.button}
+            >
+              <text>{t('COMPONENTS.AUTH_MODAL.SIGN_IN')}</text>
+            </Button>
+            <Button
+              onClick={onPressRegister}
+              isLoading={isLoading}
+              className={styles.button}
+            >
+              <text>{t('COMPONENTS.AUTH_MODAL.SIGN_UP')}</text>
+            </Button>
+          </div>
         </div>
       </form>
     </div>
