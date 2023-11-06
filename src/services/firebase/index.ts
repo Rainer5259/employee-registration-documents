@@ -1,31 +1,13 @@
 import { initializeApp } from 'firebase/app'
 
-// import {
-//   API_KEY,
-//   AUTH_DOMAIN,
-//   PROJECT_ID,
-//   STORAGE_BUCKET,
-//   MESSAGING_SENDER_ID,
-//   APP_ID,
-//   MEASUREMENT_ID
-// } from '@firebase_env'
-
 export const firebaseConfig = {
-  // apiKey: process.env.API_KEY,
-  // authDomain: process.env.AUTH_DOMAIN,
-  // databaseURL: process.env.DATABASE_URL,
-  // projectId: process.env.PROJECT_ID,
-  // storageBucket: process.env.STORAGE_BUCKET,
-  // messagingSenderId: process.env.MESSAGING_SENDER_ID,
-  // appId: process.env.APP_ID,
-  // measurementId: process.env.MEASUREMENT_ID
-  apiKey: 'AIzaSyA3QkAHwDFKBMKoUshfIbnTPvQ85b5h10k',
-  authDomain: 'db-erd.firebaseapp.com',
-  databaseURL: 'https://db-erd-default-rtdb.firebaseio.com',
-  projectId: 'db-erd',
-  storageBucket: 'db-erd.appspot.com',
-  messagingSenderId: '757586612421',
-  appId: '1:757586612421:web:86bee2f47e16de840260ac',
-  measurementId: 'G-66HQF3HF7N'
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID
 }
 export const app = initializeApp(firebaseConfig)
