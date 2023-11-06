@@ -15,8 +15,8 @@ i18n
         ...pt_br
       }
     },
-    lng: 'en',
-    fallbackLng: 'en',
+    lng: 'pt_br',
+    fallbackLng: 'pt_br',
     interpolation: {
       escapeValue: false
     }

@@ -49,7 +49,7 @@ export const AuthModal: FC<AuthModalTypes> = ({
             <Button
               onClick={onPressRegister}
               isLoading={isLoading}
-              className={styles.button}
+              className={styles.buttonTransparent}
             >
               <text>{t('COMPONENTS.AUTH_MODAL.SIGN_UP')}</text>
             </Button>

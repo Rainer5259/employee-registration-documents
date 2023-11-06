@@ -1,18 +1,17 @@
 import styles from './dashboard.module.sass'
 import { t } from 'i18next'
-import InputWithExternalPlaceholder from '../../components/ui/InputWithExternalPlaceholder'
 import FooterButtons from '../../components/FooterButtons'
-import { FormEvent, useEffect, useState } from 'react'
-import { Page, Text, View, Document } from '@react-pdf/renderer'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import FirestoreService from '../../services/Api/firestore.service'
-import { PDFStyle } from './previewPDFStyle'
 import { toast } from 'react-toastify'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '~/redux/store'
 import { EmployeesRegistersDocumentsInterface, InputType } from '~/utils/types'
-import Cookies from 'js-cookie'
-import { Section } from '../../components/PDFViewer/Section'
 import { formatInputValue } from '../../utils/functions/formater'
+import DocumentViewer from '../../components/PDFViewer/Document'
+import FormFields from '../../components/FormFields'
+import { useNavigate } from 'react-router-dom'
+import { setRoundedAvatar } from '../../redux/slices/authenticateUser'
 
 export default function Dashboard() {
   const [name, setName] = useState<string>('John')
@@ -21,58 +20,80 @@ export default function Dashboard() {
   const [address, setAddress] = useState<string>(
     'Suzy Queue 4455 Landing Lange, APT 4 Louisville, KY 40018-1234'
   )
-  const [phoneNumber, setPhoneNumber] = useState<string>('')
-  const [birthDate, setBirthDate] = useState<string>('')
-  const [avatarURL, setAvatar] = useState<string>('')
+  const [phoneNumber, setPhoneNumber] = useState<string>('75998622304')
+  const [birthDate, setBirthDate] = useState<string>('15012001')
+  const [avatarURL, setAvatarURL] = useState<string>('')
   const [avatarFile, setAvatarFile] = useState<any>(null)
   const [biography, setBiography] = useState<string>(
     'Sou um entusiasta de tecnologia, apaixonado por resolver problemas e desenvolver soluções inovadoras. Adoro aprender novas tecnologias e explorar novas maneiras de aprimorar o desenvolvimento. Nos tempos livres, gosto de ler, escrever, e praticar esportes ao ar livre.'
   )
   const [office, setOffice] = useState<string>('Developer')
-  const [issueDate, setIssueDate] = useState<string>('2023-01-15')
+  const [issueDate, setIssueDate] = useState<string>('15012023')
   const [sector, setSector] = useState<string>('Engineering')
-  const [salary, setSalary] = useState<string>('')
+  const [salary, setSalary] = useState<string>('5000')
 
+  const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.authenticateUser.user)
-
+  const dispatch = useDispatch()
+  const roundedAvatar = useSelector(
+    (state: RootState) => state.authenticateUser.roundedAvatar
+  )
+  console.log(roundedAvatar)
   const handleSendDocument = async (event: FormEvent) => {
     event.preventDefault()
     const timestamp = new Date()
 
-    const formData: EmployeesRegistersDocumentsInterface = {
-      uid: user?.uid ?? '',
-      employee: {
-        name,
-        lastName,
-        office,
-        sector,
-        salary,
-        issueDate,
-        address,
-        phoneNumber,
-        birthDate,
-        avatarURL,
-
-        biography,
-        gender,
-        timestamp: {
-          created: timestamp,
-          updated: timestamp
-        }
+    const employee = {
+      name,
+      lastName,
+      office,
+      sector,
+      salary,
+      issueDate,
+      address,
+      phoneNumber,
+      birthDate,
+      avatarURL,
+      biography,
+      gender,
+      roundedAvatar: roundedAvatar,
+      timestamp: {
+        created: timestamp,
+        updated: timestamp
       }
     }
 
-    const formDataArray = Object.values(formData).every(value => !!value)
+    const formData: EmployeesRegistersDocumentsInterface = {
+      uid: user?.uid ?? '',
+      employee,
+      promotion: null
+    }
 
-    if (!formDataArray) {
+    if (
+      !name ||
+      !lastName ||
+      !office ||
+      !sector ||
+      !salary ||
+      !issueDate ||
+      !address ||
+      !phoneNumber ||
+      !birthDate ||
+      !avatarURL ||
+      !biography ||
+      !gender
+    ) {
       return toast(t('ERRORS.FILL_FIELDS'))
     }
 
     try {
       if (user?.email || user?.uid) {
-        await FirestoreService.sendDocument(formData)
-        const fetchAllDocs = await FirestoreService.fetchDocs()
-        console.log(fetchAllDocs)
+        await FirestoreService.sendDocument(formData).then(async response => {
+          await FirestoreService.uploadFile(response.id, avatarFile!)
+          navigate('/home')
+          dispatch(setRoundedAvatar(false))
+          toast(t('GENERICS.SUCCESS'))
+        })
         return
       }
     } catch (e) {
@@ -86,22 +107,54 @@ export default function Dashboard() {
     callback: (formatedValue: string) => void
   ) => {
     const formatedValue = formatInputValue(onChangeText, type)
-    console.log(formatedValue)
 
     return callback(formatedValue)
   }
 
-  useEffect(() => {
-    const fetchDocByID = async () => {
-      try {
-        const docByID = await FirestoreService.fetchDocsByUserID(user?.uid!)
-        console.log('docs by ID', docByID)
-        return
-      } catch (e) {
-        console.log('catch, doc by ID not', e)
-      }
+  const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return
     }
-    fetchDocByID()
+
+    const file = e.target.files[0]
+
+    if (!file) {
+      return
+    }
+
+    if (file.type === 'image/jpeg' || file.type === 'image/png') {
+      const reader = new FileReader()
+      reader.onload = function (event) {
+        const result = event.target?.result
+
+        if (result) {
+          const arrayBuffer = result as ArrayBuffer
+          const uint8Array = new Uint8Array(arrayBuffer)
+          setAvatarFile(uint8Array)
+          setAvatarURL(URL.createObjectURL(file))
+        }
+      }
+
+      reader.onerror = function (event) {
+        console.error('Erro ao ler o arquivo:', event.target?.error)
+      }
+
+      reader.readAsArrayBuffer(file)
+    }
+  }
+
+  const fetchDocsByID = async () => {
+    try {
+      await FirestoreService.fetchDocsByUserID(user?.uid!)
+
+      return
+    } catch (e) {
+      e
+    }
+  }
+
+  useEffect(() => {
+    fetchDocsByID()
   }, [])
 
   return (
@@ -118,223 +171,53 @@ export default function Dashboard() {
           </div>
           <div className={styles.formBox}>
             <text>{t('SCREENS.DASHBOARD.TITLE.CONTACT_INFO')}</text>
-            <form className={styles.form}>
-              <div>
-                <div className={styles.divBoxOne}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.NAME'
-                    )}
-                    maxLength={15}
-                  />
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={lastName}
-                    onChange={e => setLastName(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.LAST_NAME'
-                    )}
-                    maxLength={25}
-                  />
-                </div>
-                <div className={styles.profileImage}>
-                  <img
-                    style={{
-                      width: 110,
-                      height: 140,
-                      backgroundColor: '#D8D9D9',
-                      marginRight: 20,
-                      borderWidth: 0,
-                      borderRadius: 10
-                    }}
-                  />
-                  <div className={styles.options}>
-                    <text>Foto do perfil</text>
-                    <text>Adicionar Foto</text>
-                    <text>Button foto redonda?</text>
-                    <text>User: {user?.uid}</text>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.uniqueInputBox}>
-                <InputWithExternalPlaceholder
-                  placeholder=""
-                  value={biography}
-                  onChange={e => setBiography(e.target.value)}
-                  className=""
-                  externalPlaceholder={t(
-                    'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.BIOGRAPHY'
-                  )}
-                  maxLength={260}
-                />
-              </div>
-
-              <div className={styles.uniqueInputBox}>
-                <InputWithExternalPlaceholder
-                  placeholder=""
-                  value={address}
-                  onChange={e => setAddress(e.target.value)}
-                  className=""
-                  externalPlaceholder={t(
-                    'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.ADDRESS'
-                  )}
-                  maxLength={64}
-                />
-              </div>
-              <div>
-                <div className={styles.divBoxThree}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={phoneNumber}
-                    onChange={e =>
-                      handleFormatInput(
-                        e.target.value,
-                        'phoneNumber',
-                        setPhoneNumber
-                      )
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.PHONE_NUMBER'
-                    )}
-                    maxLength={16}
-                  />
-                </div>
-                <div className={styles.divBoxThree}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={birthDate}
-                    onChange={e =>
-                      handleFormatInput(e.target.value, 'date', setBirthDate)
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.BIRTH_DATE'
-                    )}
-                    maxLength={8}
-                  />
-                </div>
-              </div>
-              <div className={styles.divBoxThree}>
-                <InputWithExternalPlaceholder
-                  placeholder=""
-                  value={gender}
-                  onChange={e => setGender(e.target.value)}
-                  className=""
-                  externalPlaceholder={t(
-                    'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.GENDER'
-                  )}
-                  maxLength={12}
-                />
-              </div>
-              <div>
-                <div className={styles.divBoxTwo}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={office}
-                    onChange={e => setOffice(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.OFFICE'
-                    )}
-                    maxLength={25}
-                  />
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={sector}
-                    onChange={e => setSector(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.SECTOR'
-                    )}
-                    maxLength={25}
-                  />
-                </div>
-                <div className={styles.divBoxTwo}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={salary}
-                    onChange={e =>
-                      handleFormatInput(
-                        e.target.value,
-                        'BRLcurrency',
-                        setSalary
-                      )
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.SALARY'
-                    )}
-                    maxLength={16}
-                  />
-
-                  <InputWithExternalPlaceholder
-                    placeholder={t('SCREENS.DASHBOARD.PLACEHOLDER.ISSUE_DATE')}
-                    value={issueDate}
-                    onChange={e =>
-                      handleFormatInput(e.target.value, 'date', setIssueDate)
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.ISSUE_DATE'
-                    )}
-                    maxLength={8}
-                  />
-                </div>
-              </div>
-            </form>
+            <FormFields
+              address={address}
+              avatarURL={avatarURL}
+              biography={biography}
+              birthDate={birthDate}
+              gender={gender}
+              handleFile={handleFile}
+              handleFormatInput={handleFormatInput}
+              issueDate={issueDate}
+              lastName={lastName}
+              name={name}
+              office={office}
+              phoneNumber={phoneNumber}
+              salary={salary}
+              sector={sector}
+              setAddress={setAddress}
+              setAvatarURL={setAvatarURL}
+              setBiography={setBiography}
+              setBirthDate={setBirthDate}
+              setGender={setGender}
+              setIssueDate={setIssueDate}
+              setLastName={setLastName}
+              setName={setName}
+              setOffice={setOffice}
+              setPhoneNumber={setPhoneNumber}
+              setSalary={setSalary}
+              setSector={setSector}
+            />
           </div>
           <FooterButtons
-            onPressLeft={() => {
-              Cookies.remove('authFirebaseToken')
-              location.reload()
-            }}
+            text={t('SCREENS.DASHBOARD.BUTTON.SEND')}
             onPressRight={handleSendDocument}
           />
         </div>
         <div className={styles.boxTwo}>
-          <Document style={PDFStyle.document}>
-            <Page size="A4" style={PDFStyle.page}>
-              <View style={PDFStyle.container}>
-                <Section
-                  title={name}
-                  firstChildren={<Text style={PDFStyle.text}>{biography}</Text>}
-                />
-                <Section
-                  title={t(
-                    'SCREENS.DASHBOARD.PDF_VIEWER.TITLE.CONTACT_DETAILS'
-                  )}
-                  firstChildren={<Text style={PDFStyle.text}>{birthDate}</Text>}
-                  secondChildren={
-                    <View style={PDFStyle.content}>
-                      <Text>{address}</Text>
-                      <Text style={PDFStyle.text}>{phoneNumber}</Text>
-                      <Text style={PDFStyle.text}>{gender}</Text>
-                    </View>
-                  }
-                />
-
-                <Section
-                  title={t('SCREENS.DASHBOARD.PDF_VIEWER.TITLE.EXPERIENCE')}
-                  firstChildren={<Text style={PDFStyle.text}>{issueDate}</Text>}
-                  secondChildren={
-                    <View style={PDFStyle.content}>
-                      <Text>
-                        {office} <Text style={PDFStyle.text}>{sector}</Text>
-                      </Text>
-                      <Text style={PDFStyle.text}>{salary}</Text>
-                    </View>
-                  }
-                />
-              </View>
-            </Page>
-          </Document>
+          <DocumentViewer
+            address={address}
+            biography={biography}
+            birthDate={birthDate}
+            gender={gender}
+            issueDate={issueDate}
+            name={name}
+            office={office}
+            phoneNumber={phoneNumber}
+            salary={salary}
+            sector={sector}
+          />
         </div>
       </div>
     </div>

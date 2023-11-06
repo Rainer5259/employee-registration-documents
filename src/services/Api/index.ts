@@ -15,15 +15,18 @@ import {
 import {
   DocumentChange,
   DocumentData,
+  DocumentReference,
   DocumentSnapshot,
   Firestore,
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where
 } from 'firebase/firestore'
 import { AuthFirestoreService } from '../firebase/firestore'
@@ -34,7 +37,8 @@ import {
   ref,
   uploadBytes
 } from 'firebase/storage'
-import { Blob } from 'buffer'
+import { Promotion } from '~/utils/enums/promotion'
+
 export abstract class Api {
   private firebaseAutheticationToken: Auth = AuthFirebaseService
   private firebaseToken: Firestore = AuthFirestoreService
@@ -98,12 +102,12 @@ export abstract class Api {
 
   protected sendDocumentToStore = (
     data: EmployeesRegistersDocumentsInterface
-  ): Promise<EmployeesRegistersDocumentsInterface> => {
-    return new Promise<EmployeesRegistersDocumentsInterface>(
+  ): Promise<DocumentReference<DocumentData, DocumentData>> => {
+    return new Promise<DocumentReference<DocumentData, DocumentData>>(
       (resolve, reject) => {
         addDoc(collection(this.firebaseToken, this.basePathERD), data)
-          .then(() => {
-            resolve(data)
+          .then(response => {
+            resolve(response)
           })
           .catch(error => {
             reject(error as FirebaseError)
@@ -194,6 +198,35 @@ export abstract class Api {
     })
   }
 
+  protected promoteEmployee = (
+    docID: string,
+    data: Promotion
+  ): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      updateDoc(doc(this.firebaseToken, this.basePathERD, docID), {
+        promotion: data
+      })
+        .then(response => {
+          resolve(response)
+        })
+        .catch(error => {
+          reject(error as FirebaseError)
+        })
+    })
+  }
+
+  protected deleteEmployee = (docID: string): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      deleteDoc(doc(this.firebaseToken, this.basePathERD, docID))
+        .then(response => {
+          resolve(response)
+        })
+        .catch(error => {
+          reject(error as FirebaseError)
+        })
+    })
+  }
+
   protected uploadFileToStorage = (
     docID: string,
     data: Uint8Array
@@ -220,74 +253,4 @@ export abstract class Api {
         })
     })
   }
-  // protected fetchERDByDocID = (docID: string): Promise<DocumentData | null> => {
-  //   return new Promise<DocumentData | null>((resolve, reject) => {
-  //     doc(this.firebaseToken, this.basePathERD, docID)
-  //       .then(response => {
-  //         console.log('response api', response)
-  //         resolve(response)
-  //       })
-  //       .catch(error => {
-  //         reject(error as FirebaseError)
-  //       })
-  //   })
-  // }
-  // protected fetchDoc = (
-  //   docID: string
-  // ): Promise<EmployeesRegistersDocumentsInterface> => {
-  //   return new Promise<EmployeesRegistersDocumentsInterface>(
-  //     (resolve, reject) => {
-  //       setDoc(
-  //         doc(collection(this.firebaseToken, this.basePathERD)),
-  //         where(docID, '==', docID)
-  //       )
-  //         .then(() => {
-  //           resolve(data)
-  //         })
-  //         .catch(error => {
-  //           reject(error as FirebaseError)
-  //         })
-  //     }
-  //   )
-  // }
-  /**ERD: Employees Registers Documents*/
-  // protected fetchAllListERD = () => {
-  //   return new Promise<EmployeesRegistersDocumentsInterface>(
-  //     (resolve, reject) => {
-  //       const docRef = doc(this.firebaseToken, this.basePathERD)
-
-  //       const unsubscribe = onSnapshot(docRef, {
-  //         next: snapshot => {
-  //           const data = snapshot.data() as EmployeesRegistersDocumentsInterface
-  //           resolve(data)
-  //         },
-  //         error: error => {
-  //           reject(error)
-  //         }
-  //       })
-
-  //       unsubscribe()
-  //     }
-  //   )
-  // }
-
-  // protected fetchDocByID = () => {
-  //   return new Promise<EmployeesRegistersDocumentsInterface>(
-  //     (resolve, reject) => {
-  //       const docRef = doc(this.firebaseToken, this.basePathERD)
-
-  //       const unsubscribe = onSnapshot(docRef, {
-  //         next: snapshot => {
-  //           const data = snapshot.data() as EmployeesRegistersDocumentsInterface
-  //           resolve(data)
-  //         },
-  //         error: error => {
-  //           reject(error)
-  //         }
-  //       })
-
-  //       unsubscribe()
-  //     }
-  //   )
-  // }
 }

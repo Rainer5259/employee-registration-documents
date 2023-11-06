@@ -1,10 +1,19 @@
 .container
   margin-top: 30px
+  @media (max-width: 550px)
+    display: flex
+    padding-inline: 2px
+    flex-direction: column
 
 .list
   display: flex
   flex-direction: row
-  padding-inline: 40px
+  @media (max-width: 550px)
+    border-style: solid
+    border-width: 0.3px
+    border-color: var(--taupe-gray)
+    padding: 4px
+    margin: 2px
 
 .employeeBox
   display: flex
@@ -13,12 +22,21 @@
 
 .lastNameBox
   margin-left: 10px
+  @media (max-width: 550px)
+    margin-left: 4px
 
 .button
   width: 100px
   height: 30px
-
   margin-inline: 12px
   border-radius: 10px
   background: var(--default-secondary-gray)
   color: var(--primary-text)
+  align-items: center
+  justify-content: center
+  @media (max-width: 550px)
+    display: flex
+    flex-direction: column
+    margin: 4px
+    width: 80px
+    height: 20px

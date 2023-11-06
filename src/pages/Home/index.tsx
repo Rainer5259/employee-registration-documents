@@ -7,7 +7,7 @@ import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore'
 import { ListDocs } from '../../components/DocumentsList'
 import { Button } from '../../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
-import Header from '../../components/Header'
+import { t } from 'i18next'
 
 export default function Home() {
   const user = useSelector((state: RootState) => state.authenticateUser.user)
@@ -16,16 +16,14 @@ export default function Home() {
   const navigate = useNavigate()
 
   const handleFetchDocs = async () => {
-    if (!employeeDocuments) {
-      const response: QueryDocumentSnapshot<DocumentData, DocumentData>[] =
-        await firestoreService.fetchDocsByUserID(user?.uid!)
+    const response: QueryDocumentSnapshot<DocumentData, DocumentData>[] =
+      await firestoreService.fetchDocsByUserID(user?.uid!)
 
-      const documents = response.map(doc => {
-        return doc
-      })
+    const documents = response.map(doc => {
+      return doc
+    })
 
-      setEmployeeDocuments(documents)
-    }
+    setEmployeeDocuments(documents)
   }
 
   const handleAddNewEmployee = async () => {
@@ -39,20 +37,19 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <Header />
-      <text className={styles.title}>Employees List</text>
+      <text className={styles.title}>{t('SCREENS.HOME.TITLE')}</text>
       {employeeDocuments && (
         <ListDocs
           data={employeeDocuments}
-          onPressPromote={() => console.log('promote')}
-          onPressTerminateContract={() => console.log('terminate')}
+          onPressPromote={() => handleFetchDocs()}
+          onPressTerminateContract={() => handleFetchDocs()}
         />
       )}
       <Button
         className={styles.buttonAddEmployee}
         onClick={handleAddNewEmployee}
       >
-        Add new
+        {t('SCREENS.HOME.BUTTONS.ADD_NEW')}
       </Button>
     </div>
   )

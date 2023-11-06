@@ -6,6 +6,7 @@ import { User } from 'firebase/auth'
 export interface AuthenticateUserProps {
   token: string | null
   user: User | null
+  roundedAvatar: boolean
   error: boolean
   loading: boolean
   errorMessage: string
@@ -14,6 +15,7 @@ export interface AuthenticateUserProps {
 const initialState: AuthenticateUserProps = {
   token: null,
   user: null,
+  roundedAvatar: false,
   error: false,
   loading: false,
   errorMessage: ''
@@ -28,6 +30,9 @@ export const authenticateUserSlice = createSlice({
     },
     setUser: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload
+    },
+    setRoundedAvatar: (state, action: PayloadAction<boolean | false>) => {
+      state.roundedAvatar = action.payload
     }
   },
 
@@ -48,6 +53,7 @@ export const authenticateUserSlice = createSlice({
   }
 })
 
-export const { setToken, setUser } = authenticateUserSlice.actions
+export const { setToken, setUser, setRoundedAvatar } =
+  authenticateUserSlice.actions
 
 export default authenticateUserSlice.reducer

@@ -1,7 +1,10 @@
+import { Promotion } from '../enums/promotion'
+
 export interface EmployeesRegistersDocumentsInterface {
   uid: string
   employee: Employees
   updatesHistory?: Employees[]
+  promotion?: Promotion | null
 }
 
 export interface Employees {
@@ -17,10 +20,13 @@ export interface Employees {
   address: string
   phoneNumber: string
   birthDate: string
-  timestamp: {
-    updated?: Date
-    created?: Date
-  }
+  roundedAvatar?: boolean | false
+  timestamp?: timestamp
+}
+
+export interface timestamp {
+  updated?: Date
+  created?: Date
 }
 
 export type StorageFileType = Uint8Array | null

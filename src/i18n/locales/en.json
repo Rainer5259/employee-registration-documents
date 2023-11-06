@@ -7,12 +7,17 @@
       "EMAIL": "E-mail",
       "PASSWORD": "Password",
       "NEXT": "Next",
-      "WELCOME": "Welcome!"
+      "WELCOME": "Welcome!",
+      "SUCCESS": "Sucess"
     },
     "COMPONENTS": {
       "AUTH_MODAL": {
         "SIGN_UP": "Sign up",
         "SIGN_IN": "Join"
+      },
+      "HEADER": {
+        "STEP": "Step {{step1}} of {{step2}}",
+        "TITLE": "Contact information"
       }
     },
     "SCREENS": {
@@ -30,6 +35,16 @@
           "USER_REGISTERED": "User registered successfully"
         }
       },
+      "HOME": {
+        "TITLE": "Employee List",
+        "BUTTONS": {
+          "PROMOTE": "Promote",
+          "PROMOTED": "Promoted",
+          "EDIT": "Edit",
+          "END_CONTRACT": "End contract",
+          "ADD_NEW": "Add new"
+        }
+      },
       "DASHBOARD": {
         "TITLE": {
           "TELL_US_ABOUT_YOURSELF": "Tell us a little about yourself",
@@ -38,6 +53,11 @@
         "SUBTITLE": {
           "HOW_CONTACT_YOU": "Tell us who you are, how workers can contact you and qualify your profession."
         },
+        "AVATAR": {
+          "TEXT_ONE": "Profile photo",
+          "TEXT_TWO": "Add photo",
+          "TEXT_THREE": "Rounded photo"
+        },
         "EMPLOYEE": {
           "ADD": "Add new employee",
           "EDIT": "Edit employee"
@@ -45,9 +65,9 @@
         "BUTTON": {
           "CANCEL": "Cancel",
           "CONFIRM": "Confirm",
-          "ADD": "ADD",
-          "PREVIOUS": "Previous",
-          "NEXT": "Next"
+          "ADD": "Add",
+          "SAVE": "Save",
+          "SEND": "Send"
         },
         "EXTERNAL_PLACEHOLDER": {
           "NAME": "ex: Tiago ",

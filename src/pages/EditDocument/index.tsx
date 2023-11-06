@@ -1,13 +1,10 @@
 import styles from './editDocument.module.sass'
 import { t } from 'i18next'
-import InputWithExternalPlaceholder from '../../components/ui/InputWithExternalPlaceholder'
 import FooterButtons from '../../components/FooterButtons'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { Page, Text, View, Document } from '@react-pdf/renderer'
 import FirestoreService from '../../services/Api/firestore.service'
-import { PDFStyle } from './previewPDFStyle'
 import { toast } from 'react-toastify'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '~/redux/store'
 import {
   Employees,
@@ -15,11 +12,12 @@ import {
   InputType,
   StorageFileType
 } from '~/utils/types'
-import Cookies from 'js-cookie'
-import { Section } from '../../components/PDFViewer/Section'
 import { formatInputValue } from '../../utils/functions/formater'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header'
+import FormFields from '../../components/FormFields'
+import DocumentViewer from '../../components/PDFViewer/Document'
+import { setRoundedAvatar } from '../../redux/slices/authenticateUser'
 
 export default function EditDocument() {
   const { state } = useLocation()
@@ -38,8 +36,15 @@ export default function EditDocument() {
   const [sector, setSector] = useState<string>('')
   const [salary, setSalary] = useState<string>('')
   const [oldData, setOldData] = useState<Employees[]>([])
-
+  const [currentHistory, setCurrentHistory] = useState<Employees[] | undefined>(
+    []
+  )
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.authenticateUser.user)
+  const roundedAvatar = useSelector(
+    (state: RootState) => state.authenticateUser.roundedAvatar
+  )
 
   const handleUpdateDocument = async (event: FormEvent) => {
     event.preventDefault()
@@ -58,29 +63,52 @@ export default function EditDocument() {
       avatarURL,
       biography,
       gender,
+      roundedAvatar: roundedAvatar ?? false,
       timestamp: {
-        created: oldData[0]?.timestamp.created,
+        created: timestamp,
         updated: timestamp
       }
     }
+    const newCurrentHistory = currentHistory
+
+    newCurrentHistory && newCurrentHistory.unshift(oldData[0])
+
     const formData: EmployeesRegistersDocumentsInterface = {
       uid: user?.uid ?? '',
       employee,
-      updatesHistory: oldData
+      updatesHistory: newCurrentHistory ?? oldData
     }
 
-    const formDataArray = Object.values(formData).every(value => !!value)
-
-    console.log('formData', formData)
-    if (!formDataArray) {
+    if (
+      !name ||
+      !lastName ||
+      !office ||
+      !sector ||
+      !salary ||
+      !issueDate ||
+      !address ||
+      !phoneNumber ||
+      !birthDate ||
+      !avatarURL ||
+      !biography ||
+      !gender
+    ) {
       return toast(t('ERRORS.FILL_FIELDS'))
     }
 
     try {
-      await FirestoreService.updateDocumentWithID(state.documentID, formData)
-      await FirestoreService.uploadFile(state.documentID, avatarFile!)
+      await FirestoreService.updateDocumentWithID(
+        state.documentID,
+        formData
+      ).then(async () => {
+        await FirestoreService.uploadFile(state.documentID, avatarFile!)
+        setOldData([employee])
+        dispatch(setRoundedAvatar(false))
+        navigate('/home')
+        toast(t('GENERICS.SUCCESS'))
+      })
     } catch (e) {
-      console.log('catch', e)
+      e
     }
   }
 
@@ -130,9 +158,10 @@ export default function EditDocument() {
   useEffect(() => {
     const fetchDocWithDocID = async () => {
       try {
-        const { employee } = (await FirestoreService.fetchDocByDocID(
-          state.documentID
-        )) as EmployeesRegistersDocumentsInterface
+        const { employee, updatesHistory } =
+          (await FirestoreService.fetchDocByDocID(
+            state.documentID
+          )) as EmployeesRegistersDocumentsInterface
 
         if (employee) {
           setAddress(employee.address)
@@ -146,12 +175,13 @@ export default function EditDocument() {
           setPhoneNumber(employee.phoneNumber)
           setSalary(employee.salary)
           setSector(employee.sector)
-
           setOldData([employee])
+          setCurrentHistory(updatesHistory)
           const fetchAvatar = await FirestoreService.downloadFile(
             state.documentID
           )
           setAvatarURL(fetchAvatar)
+          dispatch(setRoundedAvatar(employee.roundedAvatar!))
         }
       } catch (e) {
         console.log('catch, doc with ID not available', e)
@@ -162,7 +192,7 @@ export default function EditDocument() {
 
   return (
     <div className={styles.container}>
-      <Header />
+      <Header stepOne={1} stepTwo={2} />
       <div className={styles.content}>
         <div className={styles.boxOne}>
           <div className={styles.headerTitle}>
@@ -174,229 +204,57 @@ export default function EditDocument() {
             </text>
           </div>
           <div className={styles.formBox}>
-            <text>{t('SCREENS.DASHBOARD.TITLE.CONTACT_INFO')}</text>
-            <form className={styles.form}>
-              <div>
-                <div className={styles.divBoxOne}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.NAME'
-                    )}
-                    maxLength={15}
-                  />
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={lastName}
-                    onChange={e => setLastName(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.LAST_NAME'
-                    )}
-                    maxLength={25}
-                  />
-                </div>
-                <div className={styles.profileImage}>
-                  {!avatarURL ? (
-                    <input
-                      type="file"
-                      accept="image/png, image/jpeg"
-                      onChange={handleFile}
-                      className={styles.avatarBox}
-                    />
-                  ) : (
-                    <img
-                      className={styles.avatarBox}
-                      src={avatarURL}
-                      alt="productPhoto"
-                      width={250}
-                      height={250}
-                    />
-                  )}
-                  <div className={styles.options}>
-                    <text>Adicionar Foto</text>
-                    <text>Button foto redonda?</text>
-                    <text>User: {user?.uid}</text>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.uniqueInputBox}>
-                <InputWithExternalPlaceholder
-                  placeholder=""
-                  value={biography}
-                  onChange={e => setBiography(e.target.value)}
-                  className=""
-                  externalPlaceholder={t(
-                    'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.BIOGRAPHY'
-                  )}
-                  maxLength={260}
-                />
-              </div>
-
-              <div className={styles.uniqueInputBox}>
-                <InputWithExternalPlaceholder
-                  placeholder=""
-                  value={address}
-                  onChange={e => setAddress(e.target.value)}
-                  className=""
-                  externalPlaceholder={t(
-                    'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.ADDRESS'
-                  )}
-                  maxLength={64}
-                />
-              </div>
-              <div>
-                <div className={styles.divBoxThree}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={phoneNumber}
-                    onChange={e =>
-                      handleFormatInput(
-                        e.target.value,
-                        'phoneNumber',
-                        setPhoneNumber
-                      )
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.PHONE_NUMBER'
-                    )}
-                    maxLength={16}
-                  />
-                </div>
-                <div className={styles.divBoxThree}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={birthDate}
-                    onChange={e =>
-                      handleFormatInput(e.target.value, 'date', setBirthDate)
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.BIRTH_DATE'
-                    )}
-                    maxLength={8}
-                  />
-                </div>
-              </div>
-              <div className={styles.divBoxThree}>
-                <InputWithExternalPlaceholder
-                  placeholder=""
-                  value={gender}
-                  onChange={e => setGender(e.target.value)}
-                  className=""
-                  externalPlaceholder={t(
-                    'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.GENDER'
-                  )}
-                  maxLength={12}
-                />
-              </div>
-              <div>
-                <div className={styles.divBoxTwo}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={office}
-                    onChange={e => setOffice(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.OFFICE'
-                    )}
-                    maxLength={25}
-                  />
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={sector}
-                    onChange={e => setSector(e.target.value)}
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.SECTOR'
-                    )}
-                    maxLength={25}
-                  />
-                </div>
-                <div className={styles.divBoxTwo}>
-                  <InputWithExternalPlaceholder
-                    placeholder=""
-                    value={salary}
-                    onChange={e =>
-                      handleFormatInput(
-                        e.target.value,
-                        'BRLcurrency',
-                        setSalary
-                      )
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.SALARY'
-                    )}
-                    maxLength={16}
-                  />
-
-                  <InputWithExternalPlaceholder
-                    placeholder={t('SCREENS.DASHBOARD.PLACEHOLDER.ISSUE_DATE')}
-                    value={issueDate}
-                    onChange={e =>
-                      handleFormatInput(e.target.value, 'date', setIssueDate)
-                    }
-                    className=""
-                    externalPlaceholder={t(
-                      'SCREENS.DASHBOARD.EXTERNAL_PLACEHOLDER.ISSUE_DATE'
-                    )}
-                    maxLength={8}
-                  />
-                </div>
-              </div>
-            </form>
+            <text className={styles.formBoxTitle}>
+              {t('SCREENS.DASHBOARD.TITLE.CONTACT_INFO')}
+            </text>
+            <FormFields
+              roundedAvatar
+              address={address}
+              avatarURL={avatarURL}
+              biography={biography}
+              birthDate={birthDate}
+              gender={gender}
+              handleFile={handleFile}
+              handleFormatInput={handleFormatInput}
+              issueDate={issueDate}
+              lastName={lastName}
+              name={name}
+              office={office}
+              phoneNumber={phoneNumber}
+              salary={salary}
+              sector={sector}
+              setAddress={setAddress}
+              setAvatarURL={setAvatarURL}
+              setBiography={setBiography}
+              setBirthDate={setBirthDate}
+              setGender={setGender}
+              setIssueDate={setIssueDate}
+              setLastName={setLastName}
+              setName={setName}
+              setOffice={setOffice}
+              setPhoneNumber={setPhoneNumber}
+              setSalary={setSalary}
+              setSector={setSector}
+            />
           </div>
           <FooterButtons
-            onPressLeft={() => {
-              Cookies.remove('authFirebaseToken')
-              location.reload()
-            }}
             onPressRight={handleUpdateDocument}
+            text={t('SCREENS.DASHBOARD.BUTTON.SEND')}
           />
         </div>
         <div className={styles.boxTwo}>
-          <Document style={PDFStyle.document}>
-            <Page size="A4" style={PDFStyle.page}>
-              <View style={PDFStyle.container}>
-                <Section
-                  title={name}
-                  firstChildren={<Text style={PDFStyle.text}>{biography}</Text>}
-                />
-                <Section
-                  title={t(
-                    'SCREENS.DASHBOARD.PDF_VIEWER.TITLE.CONTACT_DETAILS'
-                  )}
-                  firstChildren={<Text style={PDFStyle.text}>{birthDate}</Text>}
-                  secondChildren={
-                    <View style={PDFStyle.content}>
-                      <Text>{address}</Text>
-                      <Text style={PDFStyle.text}>{phoneNumber}</Text>
-                      <Text style={PDFStyle.text}>{gender}</Text>
-                    </View>
-                  }
-                />
-
-                <Section
-                  title={t('SCREENS.DASHBOARD.PDF_VIEWER.TITLE.EXPERIENCE')}
-                  firstChildren={<Text style={PDFStyle.text}>{issueDate}</Text>}
-                  secondChildren={
-                    <View style={PDFStyle.content}>
-                      <Text>
-                        {office} <Text style={PDFStyle.text}>{sector}</Text>
-                      </Text>
-                      <Text style={PDFStyle.text}>{salary}</Text>
-                    </View>
-                  }
-                />
-              </View>
-            </Page>
-          </Document>
+          <DocumentViewer
+            address={address}
+            biography={biography}
+            birthDate={birthDate}
+            gender={gender}
+            issueDate={issueDate}
+            name={name}
+            office={office}
+            phoneNumber={phoneNumber}
+            salary={salary}
+            sector={sector}
+          />
         </div>
       </div>
     </div>

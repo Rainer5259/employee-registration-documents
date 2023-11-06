@@ -13,6 +13,10 @@
       "AUTH_MODAL": {
         "SIGN_UP": "Registrar",
         "SIGN_IN": "Entrar"
+      },
+      "HEADER": {
+        "STEP": "Passo {{step1}} de {{step2}}",
+        "TITLE": "Informações docontato"
       }
     },
     "SCREENS": {
@@ -30,6 +34,16 @@
           "USER_REGISTERED": "Usuário cadastrado com sucesso"
         }
       },
+      "HOME": {
+        "TITLE": "Lista de funcionários",
+        "BUTTONS": {
+          "PROMOTE": "Promover",
+          "PROMOTED": "Promovido",
+          "EDIT": "Editar",
+          "END_CONTRACT": "Eliminar",
+          "ADD_NEW": "Adicionar novo"
+        }
+      },
       "DASHBOARD": {
         "TITLE": {
           "TELL_US_ABOUT_YOURSELF": "Fale-nos um pouco sobre você",
@@ -38,16 +52,21 @@
         "SUBTITLE": {
           "HOW_CONTACT_YOU": "Diga quem você é, como os empregados podem entrar em contato com você e qual a sua profissão."
         },
+        "AVATAR": {
+          "TEXT_ONE": "Foto do perfil",
+          "TEXT_TWO": "Adicionar Foto",
+          "TEXT_THREE": "Foto redonda"
+        },
         "EMPLOYEE": {
           "ADD": "Adicionar novo funcionário",
           "EDIT": "Editar funcionário"
         },
         "BUTTON": {
-          "CANCEL": "Cancelar",
-          "CONFIRM": "Confirmar",
-          "ADD": "Adicionar",
-          "PREVIOUS": "Anterior",
-          "NEXT": "Próximo"
+          "CANCEL": "Cancel",
+          "CONFIRM": "Confirm",
+          "ADD": "Add",
+          "SAVE": "Salvar",
+          "SEND": "Enviar"
         },
         "EXTERNAL_PLACEHOLDER": {
           "NAME": "ex: Tiago ",
@@ -62,7 +81,8 @@
           "PHONE_NUMBER": "ex: (11) 9 9123-7676",
           "EMAIL": "ex: tiago.souza@email.com",
           "NATIONALITY": "ex: Brasileiro",
-          "BIRTH_DATE": "ex: 23-05-1985 "
+          "BIRTH_DATE": "ex: 23-05-1985",
+          "BIOGRAPHY": "Biografia"
         },
         "PLACEHOLDER": {
           "ISSUE_DATE": "Data de admissão"

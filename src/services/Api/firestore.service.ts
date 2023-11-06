@@ -1,5 +1,7 @@
 import { Employees, EmployeesRegistersDocumentsInterface } from '~/utils/types'
 import { Api } from '.'
+import { Promotion } from '~/utils/enums/promotion'
+import { ContractStatus } from '~/utils/enums/contract'
 
 class FirestoreService extends Api {
   constructor() {
@@ -47,6 +49,16 @@ class FirestoreService extends Api {
 
   async downloadFile(docID: string) {
     const response = await this.getURLFileFromStorage(docID)
+    return response
+  }
+
+  async promoteEmployeeWithID(docID: string, data: Promotion) {
+    const response = await this.promoteEmployee(docID, data)
+    return response
+  }
+
+  async terminateContractWithID(docID: string) {
+    const response = await this.deleteEmployee(docID)
     return response
   }
 }
