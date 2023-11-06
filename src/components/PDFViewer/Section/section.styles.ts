@@ -29,7 +29,7 @@ const styles = (width: number) => {
       borderLeftWidth: 1,
       borderRightWidth: 1,
       borderBottomWidth: 1,
-      height: width < 480 ? 170 : 140,
+      height: width < 480 ? 180 : 140,
       padding: width < 480 ? 2 : 10,
       borderColor: '#AAB2B2'
     },
