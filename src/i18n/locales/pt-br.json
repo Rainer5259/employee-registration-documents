@@ -7,7 +7,8 @@
       "EMAIL": "E-mail",
       "PASSWORD": "Senha",
       "NEXT": "Próximo",
-      "WELCOME": "Bem-Vindo!"
+      "WELCOME": "Bem-Vindo!",
+      "SUCCESS": "Sucesso"
     },
     "COMPONENTS": {
       "AUTH_MODAL": {
