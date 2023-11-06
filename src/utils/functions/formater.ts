@@ -76,7 +76,6 @@ export const formatInputValue = (value: string, type: InputType): string => {
       return formatPhoneNumber(value)
 
     case 'BRLcurrency':
-      console.log('switch', value)
       return formatCurrency(value)
     default:
       return value

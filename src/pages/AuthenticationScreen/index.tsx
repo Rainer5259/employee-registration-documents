@@ -16,8 +16,8 @@ import { type RootState } from '../../redux/store'
 import CryptoJS from 'crypto-js'
 
 export default function AuthenticationScreen() {
-  const [email, setEmail] = useState('oo@email.com')
-  const [password, setPassword] = useState('123123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [isLoading, setLoading] = useState(false)
   const token = useSelector((state: RootState) => state.authenticateUser.token)
   const navigate = useNavigate()
@@ -136,7 +136,6 @@ export default function AuthenticationScreen() {
 
     loginWithStoredToken()
   }, [!token])
-  console.log(token)
 
   return (
     <div className={styles.container}>

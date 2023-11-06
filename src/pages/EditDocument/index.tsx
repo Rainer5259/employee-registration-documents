@@ -150,7 +150,6 @@ export default function EditDocument() {
     callback: (formatedValue: string) => void
   ) => {
     const formatedValue = formatInputValue(onChangeText, type)
-    console.log(formatedValue)
 
     return callback(formatedValue)
   }
@@ -184,7 +183,7 @@ export default function EditDocument() {
           dispatch(setRoundedAvatar(employee.roundedAvatar!))
         }
       } catch (e) {
-        console.log('catch, doc with ID not available', e)
+        e
       }
     }
     fetchDocWithDocID()

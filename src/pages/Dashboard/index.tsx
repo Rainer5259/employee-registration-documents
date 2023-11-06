@@ -14,23 +14,21 @@ import { useNavigate } from 'react-router-dom'
 import { setRoundedAvatar } from '../../redux/slices/authenticateUser'
 
 export default function Dashboard() {
-  const [name, setName] = useState<string>('John')
-  const [lastName, setLastName] = useState<string>('Doe')
-  const [gender, setGender] = useState<string>('Male')
-  const [address, setAddress] = useState<string>(
-    'Suzy Queue 4455 Landing Lange, APT 4 Louisville, KY 40018-1234'
-  )
-  const [phoneNumber, setPhoneNumber] = useState<string>('75998622304')
-  const [birthDate, setBirthDate] = useState<string>('15012001')
+  const [name, setName] = useState<string>('')
+  const [lastName, setLastName] = useState<string>('')
+  const [gender, setGender] = useState<string>('')
+  const [address, setAddress] = useState<string>('')
+  const [phoneNumber, setPhoneNumber] = useState<string>('')
+  const [birthDate, setBirthDate] = useState<string>('')
   const [avatarURL, setAvatarURL] = useState<string>('')
   const [avatarFile, setAvatarFile] = useState<any>(null)
   const [biography, setBiography] = useState<string>(
     'Sou um entusiasta de tecnologia, apaixonado por resolver problemas e desenvolver soluções inovadoras. Adoro aprender novas tecnologias e explorar novas maneiras de aprimorar o desenvolvimento. Nos tempos livres, gosto de ler, escrever, e praticar esportes ao ar livre.'
   )
-  const [office, setOffice] = useState<string>('Developer')
-  const [issueDate, setIssueDate] = useState<string>('15012023')
-  const [sector, setSector] = useState<string>('Engineering')
-  const [salary, setSalary] = useState<string>('5000')
+  const [office, setOffice] = useState<string>('')
+  const [issueDate, setIssueDate] = useState<string>('')
+  const [sector, setSector] = useState<string>('')
+  const [salary, setSalary] = useState<string>('')
 
   const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.authenticateUser.user)
@@ -38,7 +36,7 @@ export default function Dashboard() {
   const roundedAvatar = useSelector(
     (state: RootState) => state.authenticateUser.roundedAvatar
   )
-  console.log(roundedAvatar)
+
   const handleSendDocument = async (event: FormEvent) => {
     event.preventDefault()
     const timestamp = new Date()
@@ -97,7 +95,7 @@ export default function Dashboard() {
         return
       }
     } catch (e) {
-      console.log('catch', e)
+      e
     }
   }
 

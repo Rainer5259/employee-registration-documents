@@ -157,7 +157,6 @@ export abstract class Api {
     return new Promise<DocumentSnapshot>((resolve, reject) => {
       getDoc(doc(this.firebaseToken, this.basePathERD, docID))
         .then(response => {
-          console.log('response api', response)
           resolve(response)
         })
         .catch(error => {

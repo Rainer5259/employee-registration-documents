@@ -29,7 +29,6 @@ export const ListDocs: FC<DocumentsListProps> = ({
     try {
       await firestoreService.terminateContractWithID(docID).then(() => {
         onPressTerminateContract()
-        console.log('then')
       })
     } catch (e) {
       e
