@@ -1,7 +1,6 @@
 import { Employees, EmployeesRegistersDocumentsInterface } from '~/utils/types'
 import { Api } from '.'
 import { Promotion } from '~/utils/enums/promotion'
-import { ContractStatus } from '~/utils/enums/contract'
 
 class FirestoreService extends Api {
   constructor() {

@@ -1,4 +1,3 @@
-import { t } from 'i18next'
 import { Button } from '../../components/ui/Button'
 import { FC } from 'react'
 import { footerButtonsProps } from './types'
