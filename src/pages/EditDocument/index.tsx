@@ -176,10 +176,8 @@ export default function EditDocument() {
           setSector(employee.sector)
           setOldData([employee])
           setCurrentHistory(updatesHistory)
-          const fetchAvatar = await FirestoreService.downloadFile(
-            state.documentID
-          )
-          setAvatarURL(fetchAvatar)
+          setAvatarURL(employee.avatarURL)
+
           dispatch(setRoundedAvatar(employee.roundedAvatar!))
         }
       } catch (e) {
