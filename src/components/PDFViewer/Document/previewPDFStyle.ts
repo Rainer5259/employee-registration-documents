@@ -11,7 +11,9 @@ export const PDFStyle = StyleSheet.create({
   },
   container: {
     flexDirection: 'column',
-    display: 'flex'
+    display: 'flex',
+    width: '100%',
+    height: '100%'
   },
   content: {
     flexDirection: 'column',

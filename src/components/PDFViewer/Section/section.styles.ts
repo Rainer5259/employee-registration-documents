@@ -24,7 +24,7 @@ const styles = (width: number) => {
       display: 'flex',
       borderStyle: 'solid',
       margin: width < 480 ? 10 : 20,
-      width: '90%',
+      width: width < 480 ? '90%' : '86%',
       borderTopWidth: 1,
       borderLeftWidth: 1,
       borderRightWidth: 1,
